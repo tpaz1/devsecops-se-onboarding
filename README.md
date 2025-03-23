@@ -1,1 +1,19 @@
-# devsecops-se-onboarding
+# kubernetes-devops-security
+
+## Fork and Clone this Repo
+
+## Clone to Desktop and VM
+
+## NodeJS Microservice - Docker Image -
+`docker build -t plusone-app .`
+
+`docker run -p 5001:5000 plusone-app`
+
+`curl localhost:8787/plusone/99`
+ 
+## NodeJS Microservice - Kubernetes Deployment -
+`kubectl create deploy node-app --image plusone-app`
+
+`kubectl expose deploy node-app --name node-service --port 5000 --type ClusterIP`
+
+`curl node-service-ip:5000/plusone/99`
