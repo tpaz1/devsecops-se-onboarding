@@ -1,4 +1,4 @@
-# kubernetes-devops-security
+# devsecops-se-onboarding
 
 ## Fork and Clone this Repo
 
