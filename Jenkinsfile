@@ -34,18 +34,17 @@ pipeline {
 
     stage('Configure JFrog CLI') {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'jfrog-user-creds', usernameVariable: 'JFROG_USER', passwordVariable: 'JFROG_PASSWORD')]) {
-          sh """
+        withCredentials([string(credentialsId: 'jfrog-access-token', variable: 'ACCESS_TOKEN')]) {
+          sh '''
             jf c add jfrog-server \
               --url=https://setompaz.jfrog.io \
-              --user=$JFROG_USER \
-              --apikey=$JFROG_PASSWORD \
+              --access-token=$ACCESS_TOKEN \
               --interactive=false \
               --artifactory-url=https://setompaz.jfrog.io/artifactory \
               --xray-url=https://setompaz.jfrog.io/xray
-
-            jf rt bce ${BUILD_NAME} ${BUILD_NUMBER}
-          """
+    
+            jf rt bce numeric-app $BUILD_NUMBER
+          '''
         }
       }
     }
