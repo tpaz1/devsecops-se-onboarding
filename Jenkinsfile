@@ -63,10 +63,10 @@ pipeline {
       steps {
         script {
           def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
-          dir('docker-oci-examples/docker-example/') {
-            sh "jf docker scan ${dockerImageName}"
-            sh "jf docker push ${dockerImageName} serepo-docker --build-name=${BUILD_NAME} --build-number=${BUILD_NUMBER}"
-          }
+          sh "jf docker scan ${dockerImageName}"
+          sh "export JFROG_CLI_BUILD_NAME=${BUILD_NAME}"
+          sh "export JFROG_CLI_BUILD_NUMBER=${BUILD_NUMBER}"
+          sh "jf docker push ${dockerImageName} serepo-docker"
         }
       }
     }
