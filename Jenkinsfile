@@ -1,11 +1,15 @@
 pipeline {
   agent any
+
   tools {
-      jfrog 'jfrog-cli'
-    }
+    jfrog 'jfrog-cli'
+  }
+
   environment {
     IMAGE_NAME = "setompaz.jfrog.io/serepo-docker/numeric-app"
     GIT_COMMIT = "${env.GIT_COMMIT}"
+    BUILD_NAME = "numeric-app"
+    BUILD_NUMBER = "${BUILD_NUMBER}"
   }
 
   stages {
@@ -27,28 +31,31 @@ pipeline {
         }
       }
     }
+
     stage('Build Docker image') {
       steps {
         script {
-            docker.build("$DOCKER_IMAGE_NAME", 'docker-oci-examples/docker-example')
+          def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
+          docker.build("${dockerImageName}", 'docker-oci-examples/docker-example')
         }
       }
     }
 
     stage('Scan and push image') {
       steps {
-        dir('docker-oci-examples/docker-example/') {
-            // Scan Docker image for vulnerabilities
-            jf 'docker scan $DOCKER_IMAGE_NAME'
-            // Push image to Artifactory
-            jf 'docker push $DOCKER_IMAGE_NAME'
+        script {
+          def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
+          dir('docker-oci-examples/docker-example/') {
+            sh "jf docker scan ${dockerImageName}"
+            sh "jf docker push ${dockerImageName} serepo-docker --build-name=${BUILD_NAME} --build-number=${BUILD_NUMBER}"
+          }
         }
       }
     }
 
     stage('Publish build info') {
       steps {
-          jf 'rt build-publish'
+        sh "jf rt build-publish ${BUILD_NAME} ${BUILD_NUMBER}"
       }
     }
   }
