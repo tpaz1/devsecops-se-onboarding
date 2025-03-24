@@ -1,5 +1,8 @@
 pipeline {
   agent any
+  tools {
+      jfrog 'jfrog-cli'
+    }
   environment {
     IMAGE_NAME = "setompaz.jfrog.io/serepo-docker/numeric-app"
     GIT_COMMIT = "${env.GIT_COMMIT}"
@@ -24,28 +27,28 @@ pipeline {
         }
       }
     }
-
-    stage('Docker Build and Push') {
+    stage('Build Docker image') {
       steps {
         script {
-          def server = Artifactory.server 'JFROG_ARTIFACTORY'
-
-          def docker = Artifactory.docker server: server
-
-          // Login to Artifactory Docker repo
-          docker.login()
-
-          def imageTag = "${IMAGE_NAME}:${GIT_COMMIT}"
-
-          // Build Docker image
-          sh "docker build -t ${imageTag} ."
-
-          // Push Docker image
-          docker.push imageTag, 'my-docker-dev'
-
-          // Optionally logout after push
-          docker.logout()
+            docker.build("$DOCKER_IMAGE_NAME", 'docker-oci-examples/docker-example')
         }
+      }
+    }
+
+    stage('Scan and push image') {
+      steps {
+        dir('docker-oci-examples/docker-example/') {
+            // Scan Docker image for vulnerabilities
+            jf 'docker scan $DOCKER_IMAGE_NAME'
+            // Push image to Artifactory
+            jf 'docker push $DOCKER_IMAGE_NAME'
+        }
+      }
+    }
+
+    stage('Publish build info') {
+      steps {
+          jf 'rt build-publish'
       }
     }
   }
