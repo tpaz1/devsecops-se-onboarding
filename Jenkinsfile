@@ -10,9 +10,27 @@ pipeline {
     GIT_COMMIT = "${env.GIT_COMMIT}"
     BUILD_NAME = "numeric-app"
     BUILD_NUMBER = "${BUILD_NUMBER}"
+    JFROG_USER = credentials('your-jfrog-username-id') // Jenkins Credentials ID
+    JFROG_API_KEY = credentials('your-jfrog-api-key-id') // Jenkins Credentials ID
   }
 
   stages {
+    stage('Configure JFrog CLI') {
+      steps {
+        sh """
+          jf c add jfrog-server \
+            --url=https://setompaz.jfrog.io \
+            --user=$JFROG_USER \
+            --apikey=$JFROG_API_KEY \
+            --interactive=false \
+            --artifactory-url=https://setompaz.jfrog.io/artifactory \
+            --xray-url=https://setompaz.jfrog.io/xray
+
+          jf rt bce ${BUILD_NAME} ${BUILD_NUMBER}
+        """
+      }
+    }
+
     stage('Build Artifact') {
       steps {
         sh "mvn clean package -DskipTests=true"
@@ -36,7 +54,9 @@ pipeline {
       steps {
         script {
           def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
-          sh "jf docker buildx build --platform linux/amd64 --tag ${dockerImageName} --file Dockerfile ."
+          dir('docker-oci-examples/docker-example/') {
+            sh "jf docker buildx build --platform linux/amd64 --tag ${dockerImageName} --file Dockerfile ."
+          }
         }
       }
     }
@@ -46,7 +66,9 @@ pipeline {
         script {
           def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
           dir('docker-oci-examples/docker-example/') {
-            sh "jf docker scan ${dockerImageName}"
+            // Optional: fail build on HIGH or CRITICAL vulnerabilities
+            sh "jf docker scan ${dockerImageName} --fail=high --output=json"
+
             sh "jf docker push ${dockerImageName} serepo-docker --build-name=${BUILD_NAME} --build-number=${BUILD_NUMBER}"
           }
         }
