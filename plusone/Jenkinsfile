@@ -37,7 +37,7 @@ pipeline {
           def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
           sh "ls -la"
           sh "cd plusone"
-          sh "jf docker buildx build --platform linux/amd64 --tag ${dockerImageName} --file Dockerfile ."
+          sh "jf docker buildx build --platform linux/amd64 --tag ${dockerImageName} --file ./plusone/Dockerfile ."
         }
       }
     }
