@@ -35,11 +35,11 @@ pipeline {
       steps {
         script {
           def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
-          sh '''
+          sh """
             cd plusone
             ls -la
             jf docker buildx build --platform linux/amd64 --tag ${dockerImageName} --file Dockerfile .
-          '''
+          """
         }
       }
     }
