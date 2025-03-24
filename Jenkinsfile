@@ -54,9 +54,7 @@ pipeline {
       steps {
         script {
           def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
-          dir('docker-oci-examples/docker-example/') {
-            sh "jf docker buildx build --platform linux/amd64 --tag ${dockerImageName} --file Dockerfile ."
-          }
+          sh "jf docker buildx build --platform linux/amd64 --tag ${dockerImageName} --file Dockerfile ."
         }
       }
     }
