@@ -40,9 +40,10 @@ pipeline {
               --url=https://setompaz.jfrog.io \
               --access-token=$ACCESS_TOKEN \
               --interactive=false \
+              --overwrite=true \
               --artifactory-url=https://setompaz.jfrog.io/artifactory \
               --xray-url=https://setompaz.jfrog.io/xray
-    
+
             jf rt bce numeric-app $BUILD_NUMBER
           '''
         }
