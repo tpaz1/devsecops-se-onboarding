@@ -12,6 +12,7 @@ pipeline {
     BUILD_NUMBER = "${BUILD_NUMBER}"
   }
 
+  stages {
     stage('Configure JFrog CLI') {
       steps {
         withCredentials([string(credentialsId: 'jfrog-access-token', variable: 'ACCESS_TOKEN')]) {
@@ -44,10 +45,12 @@ pipeline {
       steps {
         script {
           def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
-          sh "jf docker scan ${dockerImageName}"
-          sh "export JFROG_CLI_BUILD_NAME=${BUILD_NAME}"
-          sh "export JFROG_CLI_BUILD_NUMBER=${BUILD_NUMBER}"
-          sh "jf docker push ${dockerImageName}"
+          sh """
+            export JFROG_CLI_BUILD_NAME=${BUILD_NAME}
+            export JFROG_CLI_BUILD_NUMBER=${BUILD_NUMBER}
+            jf docker scan ${dockerImageName}
+            jf docker push ${dockerImageName}
+          """
         }
       }
     }
