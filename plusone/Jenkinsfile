@@ -6,31 +6,11 @@ pipeline {
   }
 
   environment {
-    IMAGE_NAME = "setompaz.jfrog.io/serepo-docker/numeric-app"
+    IMAGE_NAME = "setompaz.jfrog.io/serepo-docker/plusone-app"
     GIT_COMMIT = "${env.GIT_COMMIT}"
-    BUILD_NAME = "numeric-app"
+    BUILD_NAME = "plusone-app"
     BUILD_NUMBER = "${BUILD_NUMBER}"
   }
-
-  stages {
-    stage('Build Artifact') {
-      steps {
-        sh "mvn clean package -DskipTests=true"
-        archiveArtifacts 'target/*.jar'
-      }
-    }
-
-    stage('Unit Test') {
-      steps {
-        sh "mvn test"
-      }
-      post {
-        always {
-          junit 'target/surefire-reports/*.xml'
-          jacoco execPattern: 'target/jacoco.exec'
-        }
-      }
-    }
 
     stage('Configure JFrog CLI') {
       steps {
@@ -44,7 +24,7 @@ pipeline {
               --artifactory-url=https://setompaz.jfrog.io/artifactory \
               --xray-url=https://setompaz.jfrog.io/xray
 
-            jf rt bce numeric-app $BUILD_NUMBER
+            jf rt bce plusone-app $BUILD_NUMBER
           '''
         }
       }
@@ -54,6 +34,7 @@ pipeline {
       steps {
         script {
           def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
+          sh "ls -la"
           sh "jf docker buildx build --platform linux/amd64 --tag ${dockerImageName} --file Dockerfile ."
         }
       }
