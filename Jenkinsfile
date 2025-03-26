@@ -79,12 +79,10 @@ pipeline {
 
     stage('Kubernetes Deployment - DEV') {
       steps {
-        withKubeConfig([credentialsId: 'kubeconfig-dev']) {
-          sh """
-            cd charts
-            helm upgrade --install numeric-chart ./numeric-chart --set image.tag=${GIT_COMMIT}
-          """
-        }
+        sh """
+          cd charts
+          helm upgrade --install numeric-chart ./numeric-chart --set image.tag=${GIT_COMMIT}
+        """
       }
     }
   } 
