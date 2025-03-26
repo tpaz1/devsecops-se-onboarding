@@ -117,23 +117,24 @@ pipeline {
       steps {
         script {
           githubNotify context: 'Build and Scan Image', status: 'PENDING'
-        }
 
-        def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
-        sh """
-          if docker buildx ls | grep -q 'mybuilder'; then
-            docker buildx use mybuilder
-          else
-            docker buildx create --use --name mybuilder
-          fi
-          jf docker buildx build --platform linux/amd64 --load --tag ${dockerImageName} --file Dockerfile .
-        """
-        sh """
-          export JFROG_CLI_BUILD_NAME=${BUILD_NAME}
-          export JFROG_CLI_BUILD_NUMBER=${BUILD_NUMBER}
-          jf docker scan ${dockerImageName}
-        """
-        script {
+          def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
+
+          sh """
+            if docker buildx ls | grep -q 'mybuilder'; then
+              docker buildx use mybuilder
+            else
+              docker buildx create --use --name mybuilder
+            fi
+            jf docker buildx build --platform linux/amd64 --load --tag ${dockerImageName} --file Dockerfile .
+          """
+
+          sh """
+            export JFROG_CLI_BUILD_NAME=${BUILD_NAME}
+            export JFROG_CLI_BUILD_NUMBER=${BUILD_NUMBER}
+            jf docker scan ${dockerImageName}
+          """
+
           githubNotify context: 'Build and Scan Image', status: 'SUCCESS'
         }
       }
@@ -150,14 +151,12 @@ pipeline {
       steps {
         script {
           githubNotify context: 'Push Docker Image', status: 'PENDING'
-        }
 
-        def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
-        sh """
-          jf docker buildx build --platform linux/amd64,linux/arm64 --push --tag ${dockerImageName} --file Dockerfile .
-        """
+          def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
+          sh """
+            jf docker buildx build --platform linux/amd64,linux/arm64 --push --tag ${dockerImageName} --file Dockerfile .
+          """
 
-        script {
           githubNotify context: 'Push Docker Image', status: 'SUCCESS'
         }
       }
