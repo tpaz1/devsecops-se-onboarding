@@ -41,6 +41,7 @@ pipeline {
             else
               docker buildx create --use --name mybuilder
             fi
+            cd plusone
             jf docker buildx build --platform linux/amd64 --load --tag ${dockerImageName} --file Dockerfile .
           """
           sh """
@@ -57,8 +58,8 @@ pipeline {
         script {
           def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
           sh """
+            cd plusone
             jf docker buildx build --platform linux/amd64,linux/arm64 --push --tag ${dockerImageName} --file Dockerfile .
-
           """
         }
       }
