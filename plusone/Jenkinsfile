@@ -72,6 +72,7 @@ pipeline {
             helm upgrade --install plusone-chart ./plusone-chart --set image.tag=${GIT_COMMIT}
           """
         }
+      }
     }
   }
 }

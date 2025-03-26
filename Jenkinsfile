@@ -85,6 +85,7 @@ pipeline {
             helm upgrade --install numeric-chart ./numeric-chart --set image.tag=${GIT_COMMIT}
           """
         }
+      }
     }
-  }
+  } 
 }
