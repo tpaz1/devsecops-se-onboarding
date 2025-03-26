@@ -55,8 +55,11 @@ pipeline {
         script {
           def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
           sh """
-            docker buildx create --use --name mybuilder
-            docker buildx inspect --bootstrap
+            if docker buildx ls | grep -q 'mybuilder'; then
+              docker buildx use mybuilder
+            else
+              docker buildx create --use --name mybuilder
+            fi
             jf docker buildx build --platform linux/amd64,linux/arm64 --tag ${dockerImageName} --file Dockerfile ."
           """
         }
