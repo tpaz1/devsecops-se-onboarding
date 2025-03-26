@@ -17,3 +17,14 @@
 `kubectl expose deploy node-app --name node-service --port 5000 --type ClusterIP`
 
 `curl node-service-ip:5000/plusone/99`
+
+## 🛡️ Git Hook: Pre-commit Secret Scanning
+
+We use [pre-commit](https://pre-commit.com) + [Talisman](https://github.com/thoughtworks/talisman) to prevent committing secrets or sensitive info.
+
+### 🧩 Setup (one-time)
+
+```bash
+brew install pre-commit       # or: pip install pre-commit
+pre-commit install
+pre-commit run --all-files    # optional: run on entire repo
