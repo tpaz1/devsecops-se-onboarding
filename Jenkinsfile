@@ -54,7 +54,7 @@ pipeline {
       steps {
         script {
           def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
-          sh "jf docker buildx build --platform linux/amd64 --tag ${dockerImageName} --file Dockerfile ."
+          sh "jf docker buildx build --platform linux/amd64,linux/arm64 --tag ${dockerImageName} --file Dockerfile ."
         }
       }
     }

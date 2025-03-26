@@ -38,7 +38,7 @@ pipeline {
           sh """
             cd plusone
             ls -la
-            jf docker buildx build --platform linux/amd64 --tag ${dockerImageName} --file Dockerfile .
+            jf docker buildx build --platform linux/amd64,linux/arm64 --tag ${dockerImageName} --file Dockerfile .
           """
         }
       }
