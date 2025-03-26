@@ -60,7 +60,7 @@ pipeline {
             else
               docker buildx create --use --name mybuilder
             fi
-            jf docker buildx build --platform linux/amd64 --tag ${dockerImageName} --file Dockerfile .
+            jf docker buildx build --platform linux/amd64 --load --tag ${dockerImageName} --file Dockerfile .
           """
           sh """
             export JFROG_CLI_BUILD_NAME=${BUILD_NAME}
