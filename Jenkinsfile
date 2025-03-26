@@ -16,18 +16,18 @@ pipeline {
     stage('Build Artifact') {
       steps {
         script {
-          githubNotify context: 'Build Artifact', status: 'PENDING'
+          githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Build Artifact', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
         sh "mvn clean package -DskipTests=true"
         archiveArtifacts 'target/*.jar'
         script {
-          githubNotify context: 'Build Artifact', status: 'SUCCESS'
+          githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Build Artifact', status: 'SUCCESS', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
       }
       post {
         failure {
           script {
-            githubNotify context: 'Build Artifact', status: 'FAILURE'
+            githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Build Artifact', status: 'FAILURE', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
           }
         }
       }
@@ -36,7 +36,7 @@ pipeline {
     stage('Unit Test') {
       steps {
         script {
-          githubNotify context: 'Unit Test', status: 'PENDING'
+          githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Unit Test', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
         sh "mvn test"
       }
@@ -47,12 +47,12 @@ pipeline {
         }
         success {
           script {
-            githubNotify context: 'Unit Test', status: 'SUCCESS'
+            githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Unit Test', status: 'SUCCESS', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
           }
         }
         failure {
           script {
-            githubNotify context: 'Unit Test', status: 'FAILURE'
+            githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Unit Test', status: 'FAILURE', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
           }
         }
       }
@@ -61,7 +61,7 @@ pipeline {
     stage('Mutation Tests - PIT') {
       steps {
         script {
-          githubNotify context: 'Mutation Tests', status: 'PENDING'
+          githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Mutation Tests', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
         sh "mvn org.pitest:pitest-maven:mutationCoverage"
       }
@@ -71,12 +71,12 @@ pipeline {
         }
         success {
           script {
-            githubNotify context: 'Mutation Tests', status: 'SUCCESS'
+            githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Mutation Tests', status: 'SUCCESS', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
           }
         }
         failure {
           script {
-            githubNotify context: 'Mutation Tests', status: 'FAILURE'
+            githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Mutation Tests', status: 'FAILURE', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
           }
         }
       }
@@ -85,7 +85,7 @@ pipeline {
     stage('Configure JFrog CLI') {
       steps {
         script {
-          githubNotify context: 'Configure JFrog CLI', status: 'PENDING'
+          githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Configure JFrog CLI', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
         withCredentials([string(credentialsId: 'jfrog-access-token', variable: 'ACCESS_TOKEN')]) {
           sh """
@@ -101,13 +101,13 @@ pipeline {
           """
         }
         script {
-          githubNotify context: 'Configure JFrog CLI', status: 'SUCCESS'
+          githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Configure JFrog CLI', status: 'SUCCESS', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
       }
       post {
         failure {
           script {
-            githubNotify context: 'Configure JFrog CLI', status: 'FAILURE'
+            githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Configure JFrog CLI', status: 'FAILURE', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
           }
         }
       }
@@ -116,7 +116,7 @@ pipeline {
     stage('Build and scan image') {
       steps {
         script {
-          githubNotify context: 'Build and Scan Image', status: 'PENDING'
+          githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Build and Scan Image', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
 
           def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
 
@@ -135,13 +135,13 @@ pipeline {
             jf docker scan ${dockerImageName}
           """
 
-          githubNotify context: 'Build and Scan Image', status: 'SUCCESS'
+          githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Build and Scan Image', status: 'SUCCESS', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
       }
       post {
         failure {
           script {
-            githubNotify context: 'Build and Scan Image', status: 'FAILURE'
+            githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Build and Scan Image', status: 'FAILURE', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
           }
         }
       }
@@ -150,20 +150,20 @@ pipeline {
     stage('Push multi-platform image') {
       steps {
         script {
-          githubNotify context: 'Push Docker Image', status: 'PENDING'
+          githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Push Docker Image', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
 
           def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
           sh """
             jf docker buildx build --platform linux/amd64,linux/arm64 --push --tag ${dockerImageName} --file Dockerfile .
           """
 
-          githubNotify context: 'Push Docker Image', status: 'SUCCESS'
+          githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Push Docker Image', status: 'SUCCESS', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
       }
       post {
         failure {
           script {
-            githubNotify context: 'Push Docker Image', status: 'FAILURE'
+            githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Push Docker Image', status: 'FAILURE', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
           }
         }
       }
@@ -172,17 +172,17 @@ pipeline {
     stage('Publish build info') {
       steps {
         script {
-          githubNotify context: 'Publish Build Info', status: 'PENDING'
+          githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Publish Build Info', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
         sh "jf rt build-publish ${BUILD_NAME} ${BUILD_NUMBER}"
         script {
-          githubNotify context: 'Publish Build Info', status: 'SUCCESS'
+          githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Publish Build Info', status: 'SUCCESS', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
       }
       post {
         failure {
           script {
-            githubNotify context: 'Publish Build Info', status: 'FAILURE'
+            githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Publish Build Info', status: 'FAILURE', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
           }
         }
       }
@@ -191,7 +191,7 @@ pipeline {
     stage('Kubernetes Deployment - DEV') {
       steps {
         script {
-          githubNotify context: 'Kubernetes Deploy - DEV', status: 'PENDING'
+          githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Kubernetes Deploy - DEV', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
         sh """
           export KUBECONFIG=/var/lib/jenkins/.kube/config
@@ -200,13 +200,13 @@ pipeline {
           helm upgrade --install numeric-chart ./numeric-chart --set image.tag=${GIT_COMMIT}
         """
         script {
-          githubNotify context: 'Kubernetes Deploy - DEV', status: 'SUCCESS'
+          githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Kubernetes Deploy - DEV', status: 'SUCCESS', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
       }
       post {
         failure {
           script {
-            githubNotify context: 'Kubernetes Deploy - DEV', status: 'FAILURE'
+            githubNotify credentialsId: 'JF_GIT_TOKEN', context: 'Kubernetes Deploy - DEV', status: 'FAILURE', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
           }
         }
       }
