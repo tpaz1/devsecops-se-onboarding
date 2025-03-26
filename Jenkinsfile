@@ -80,8 +80,10 @@ pipeline {
     stage('Kubernetes Deployment - DEV') {
       steps {
         sh """
+          export KUBECONFIG=/var/lib/jenkins/.kube/config
+          kubectl get pods
           cd charts
-          helm upgrade --install numeric-chart ./numeric-chart --set image.tag=${GIT_COMMIT}
+          helm upgrade --install plusone-chart ./plusone-chart --set image.tag=${GIT_COMMIT}
         """
       }
     }

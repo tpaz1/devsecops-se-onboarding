@@ -4,6 +4,7 @@ image:
   repository: setompaz.jfrog.io/serepo-docker/plusone-app
   tag: latest
   pullPolicy: IfNotPresent
+  pullSecret: setompaz-registry-secret
 
 service:
   type: ClusterIP
