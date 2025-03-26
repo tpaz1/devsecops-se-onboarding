@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM setompaz.jfrog.io/serepo-docker/plusone-app-base:latest
 
 # Copy application
 COPY app.py .
