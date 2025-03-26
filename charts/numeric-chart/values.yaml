@@ -1,0 +1,13 @@
+replicaCount: 2
+
+image:
+  repository: setompaz.jfrog.io/serepo-docker/numeric-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 8080
+  targetPort: 8080
+
+appName: devsecops

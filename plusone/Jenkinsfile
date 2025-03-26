@@ -63,5 +63,15 @@ pipeline {
         sh "jf rt build-publish ${BUILD_NAME} ${BUILD_NUMBER}"
       }
     }
+
+    stage('Kubernetes Deployment - DEV') {
+      steps {
+        withKubeConfig([credentialsId: 'kubeconfig-dev']) {
+          sh """
+            cd charts
+            helm upgrade --install plusone-chart ./plusone-chart --set image.tag=${GIT_COMMIT}
+          """
+        }
+    }
   }
 }

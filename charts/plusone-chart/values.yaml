@@ -1,0 +1,13 @@
+replicaCount: 2
+
+image:
+  repository: setompaz.jfrog.io/serepo-docker/plusone-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 5000
+  targetPort: 5000
+
+appName: devsecops

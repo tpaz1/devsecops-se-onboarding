@@ -35,7 +35,7 @@ pipeline {
     stage('Configure JFrog CLI') {
       steps {
         withCredentials([string(credentialsId: 'jfrog-access-token', variable: 'ACCESS_TOKEN')]) {
-          sh '''
+          sh """
             jf c add jfrog-server \
               --url=https://setompaz.jfrog.io \
               --access-token=$ACCESS_TOKEN \
@@ -45,7 +45,7 @@ pipeline {
               --xray-url=https://setompaz.jfrog.io/xray
 
             jf rt bce numeric-app $BUILD_NUMBER
-          '''
+          """
         }
       }
     }
@@ -75,6 +75,16 @@ pipeline {
       steps {
         sh "jf rt build-publish ${BUILD_NAME} ${BUILD_NUMBER}"
       }
+    }
+
+    stage('Kubernetes Deployment - DEV') {
+      steps {
+        withKubeConfig([credentialsId: 'kubeconfig-dev']) {
+          sh """
+            cd charts
+            helm upgrade --install numeric-chart ./numeric-chart --set image.tag=${GIT_COMMIT}
+          """
+        }
     }
   }
 }
