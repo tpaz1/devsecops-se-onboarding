@@ -50,7 +50,7 @@ pipeline {
       }
     }
 
-    stage('Build Docker image') {
+    stage('Build and scan image') {
       steps {
         script {
           def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
@@ -60,20 +60,25 @@ pipeline {
             else
               docker buildx create --use --name mybuilder
             fi
-            jf docker buildx build --platform linux/amd64,linux/arm64 --tag ${dockerImageName} --file Dockerfile ."
+            jf docker buildx build --platform linux/amd64 --tag ${dockerImageName} --file Dockerfile .
+          """
+          sh """
+            export JFROG_CLI_BUILD_NAME=${BUILD_NAME}
+            export JFROG_CLI_BUILD_NUMBER=${BUILD_NUMBER}
+            jf docker scan ${dockerImageName}
           """
         }
       }
     }
 
-    stage('Scan and push image') {
+    stage('Push multi-platform image') {
       steps {
         script {
           def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
-          sh "jf docker scan ${dockerImageName}"
-          sh "export JFROG_CLI_BUILD_NAME=${BUILD_NAME}"
-          sh "export JFROG_CLI_BUILD_NUMBER=${BUILD_NUMBER}"
-          sh "jf docker push ${dockerImageName}"
+          sh """
+            jf docker buildx build --platform linux/amd64,linux/arm64 --push --tag ${dockerImageName} --file Dockerfile .
+
+          """
         }
       }
     }
