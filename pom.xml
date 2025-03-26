@@ -64,6 +64,26 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- PITest mutation Plugin -->
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<version>1.5.0</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-junit5-plugin</artifactId>
+						<version>0.12</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<mutationThreshold>70</mutationThreshold>
+					<outputFormats>
+						<value>XML</value>
+						<value>HTML</value>
+					</outputFormats>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 

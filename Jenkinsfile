@@ -32,6 +32,17 @@ pipeline {
       }
     }
 
+    stage('Mutation Tests - PIT') {
+      steps {
+        sh "mvn org.pitest:pitest-maven:mutationCoverage"
+      }
+      post {
+        always {
+          pitmutation mutationStatsFile: '**/target/pit-reports/**/mutation.xml'
+        }
+      }
+    }
+
     stage('Configure JFrog CLI') {
       steps {
         withCredentials([string(credentialsId: 'jfrog-access-token', variable: 'ACCESS_TOKEN')]) {
