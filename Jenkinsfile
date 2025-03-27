@@ -97,7 +97,7 @@ pipeline {
               --artifactory-url=https://setompaz.jfrog.io/artifactory \
               --xray-url=https://setompaz.jfrog.io/xray
 
-            jf bce numeric-app $BUILD_NUMBER
+            jf rt bce numeric-app $BUILD_NUMBER
           """
         }
         script {
@@ -132,7 +132,7 @@ pipeline {
           sh """
             export JFROG_CLI_BUILD_NAME=${BUILD_NAME}
             export JFROG_CLI_BUILD_NUMBER=${BUILD_NUMBER}
-            jf docker scan ${dockerImageName} --output json > xray-scan-report-image.json
+            jf docker scan ${dockerImageName} --format json > xray-scan-report-image.json
           """
           
           sh """
@@ -201,7 +201,7 @@ pipeline {
           githubNotify credentialsId: 'github-user', context: 'Xray Scan', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
         sh """
-          jf build-scan ${BUILD_NAME} ${BUILD_NUMBER} --output json > xray-report-build.json
+          jf build-scan ${BUILD_NAME} ${BUILD_NUMBER} --format json > xray-report-build.json
         """
         archiveArtifacts artifacts: 'xray-report.json', allowEmptyArchive: true
         script {
