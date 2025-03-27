@@ -11,4 +11,4 @@ service:
   port: 5000
   targetPort: 5000
 
-appName: plusoneapp
+appName: plusone
