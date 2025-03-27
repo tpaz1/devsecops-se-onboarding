@@ -97,7 +97,7 @@ pipeline {
               --artifactory-url=https://setompaz.jfrog.io/artifactory \
               --xray-url=https://setompaz.jfrog.io/xray
 
-            jf rt bce numeric-app $BUILD_NUMBER
+            jf bce numeric-app $BUILD_NUMBER
           """
         }
         script {
@@ -132,8 +132,17 @@ pipeline {
           sh """
             export JFROG_CLI_BUILD_NAME=${BUILD_NAME}
             export JFROG_CLI_BUILD_NUMBER=${BUILD_NUMBER}
-            jf docker scan ${dockerImageName}
+            jf docker scan ${dockerImageName} --output json > xray-scan-report-image.json
           """
+          
+          sh """
+            echo "Vulnerability Summary:"
+            cat xray-scan-report.json | jq '[.vulnerabilities[] | {severity, summary, component}]' | tee xray-scan-summary-image.txt
+          """
+
+          # Archive both detailed report and summary
+          archiveArtifacts artifacts: 'xray-scan-report-image.json, xray-scan-summary-image.txt', allowEmptyArchive: true
+
 
           githubNotify credentialsId: 'github-user', context: 'Build and Scan Image', status: 'SUCCESS', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
@@ -194,7 +203,7 @@ pipeline {
         }
         sh """
           # Perform Xray scan and save results
-          jf rt build-scan ${BUILD_NAME} ${BUILD_NUMBER} --output json > xray-report.json
+          jf build-scan ${BUILD_NAME} ${BUILD_NUMBER} --output json > xray-report-build.json
         """
         archiveArtifacts artifacts: 'xray-report.json', allowEmptyArchive: true
         script {
@@ -206,7 +215,7 @@ pipeline {
           script {
             githubNotify credentialsId: 'github-user', context: 'Xray Scan', status: 'FAILURE', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
           }
-          archiveArtifacts artifacts: 'xray-report.json', allowEmptyArchive: true
+          archiveArtifacts artifacts: 'xray-report-build.json', allowEmptyArchive: true
         }
       }
     }
