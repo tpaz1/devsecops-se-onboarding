@@ -140,7 +140,6 @@ pipeline {
             cat xray-scan-report.json | jq '[.vulnerabilities[] | {severity, summary, component}]' | tee xray-scan-summary-image.txt
           """
 
-          # Archive both detailed report and summary
           archiveArtifacts artifacts: 'xray-scan-report-image.json, xray-scan-summary-image.txt', allowEmptyArchive: true
 
 
@@ -202,7 +201,6 @@ pipeline {
           githubNotify credentialsId: 'github-user', context: 'Xray Scan', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
         sh """
-          # Perform Xray scan and save results
           jf build-scan ${BUILD_NAME} ${BUILD_NUMBER} --output json > xray-report-build.json
         """
         archiveArtifacts artifacts: 'xray-report.json', allowEmptyArchive: true
