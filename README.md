@@ -28,4 +28,3 @@ We use [pre-commit](https://pre-commit.com) + [Talisman](https://github.com/thou
 brew install pre-commit       # or: pip install pre-commit
 pre-commit install
 pre-commit run --all-files    # optional: run on entire repo
-
