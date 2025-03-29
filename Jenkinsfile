@@ -120,13 +120,13 @@ pipeline {
 
           def dockerImageName = "${IMAGE_NAME}:${BUILD_NUMBER}"
 
+          // jf docker buildx build --platform linux/amd64 --load --tag ${dockerImageName} --file Dockerfile .
           sh """
             if docker buildx ls | grep -q 'mybuilder'; then
               docker buildx use mybuilder
             else
               docker buildx create --use --name mybuilder
             fi
-            // jf docker buildx build --platform linux/amd64 --load --tag ${dockerImageName} --file Dockerfile .
             jf docker build -t ${dockerImageName} .
           """
 
@@ -161,9 +161,9 @@ pipeline {
         script {
           githubNotify credentialsId: 'github-user', context: 'Push Docker Image', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
 
+          // jf docker buildx build --platform linux/amd64 --push --tag ${dockerImageName} --file Dockerfile .
           def dockerImageName = "${IMAGE_NAME}:${BUILD_NUMBER}"
           sh """
-            // jf docker buildx build --platform linux/amd64 --push --tag ${dockerImageName} --file Dockerfile .
             jf docker push ${dockerImageName}
           """
 

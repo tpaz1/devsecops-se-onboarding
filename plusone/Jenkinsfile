@@ -34,6 +34,7 @@ pipeline {
      stage('Build and scan image') {
       steps {
         script {
+          // jf docker buildx build --platform linux/amd64 --load --tag ${dockerImageName} --file Dockerfile .
           def dockerImageName = "${IMAGE_NAME}:${BUILD_NUMBER}"
           sh """
             if docker buildx ls | grep -q 'mybuilder'; then
@@ -42,7 +43,6 @@ pipeline {
               docker buildx create --use --name mybuilder
             fi
             cd plusone
-            // jf docker buildx build --platform linux/amd64 --load --tag ${dockerImageName} --file Dockerfile .
             jf docker build -t ${dockerImageName} .
           """
           sh """
@@ -57,10 +57,10 @@ pipeline {
     stage('Push multi-platform image') {
       steps {
         script {
+          // jf docker buildx build --platform linux/amd64 --push --tag ${dockerImageName} --file Dockerfile .
           def dockerImageName = "${IMAGE_NAME}:${BUILD_NUMBER}"
           sh """
             cd plusone
-            // jf docker buildx build --platform linux/amd64 --push --tag ${dockerImageName} --file Dockerfile .
             jf docker push ${dockerImageName}
           """
         }
