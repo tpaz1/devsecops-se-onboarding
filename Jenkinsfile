@@ -118,7 +118,7 @@ pipeline {
         script {
           githubNotify credentialsId: 'github-user', context: 'Build and Scan Image', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
 
-          def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
+          def dockerImageName = "${IMAGE_NAME}:${BUILD_NUMBER}"
 
           sh """
             if docker buildx ls | grep -q 'mybuilder'; then
@@ -160,9 +160,9 @@ pipeline {
         script {
           githubNotify credentialsId: 'github-user', context: 'Push Docker Image', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
 
-          def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
+          def dockerImageName = "${IMAGE_NAME}:${BUILD_NUMBER}"
           sh """
-            jf docker buildx build --platform linux/amd64,linux/arm64 --push --tag ${dockerImageName} --file Dockerfile .
+            jf docker buildx build --platform linux/amd64 --push --tag ${dockerImageName} --file Dockerfile .
           """
 
           githubNotify credentialsId: 'github-user', context: 'Push Docker Image', status: 'SUCCESS', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"

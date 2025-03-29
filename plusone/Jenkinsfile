@@ -34,7 +34,7 @@ pipeline {
      stage('Build and scan image') {
       steps {
         script {
-          def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
+          def dockerImageName = "${IMAGE_NAME}:${BUILD_NUMBER}"
           sh """
             if docker buildx ls | grep -q 'mybuilder'; then
               docker buildx use mybuilder
@@ -56,10 +56,10 @@ pipeline {
     stage('Push multi-platform image') {
       steps {
         script {
-          def dockerImageName = "${IMAGE_NAME}:${GIT_COMMIT}"
+          def dockerImageName = "${IMAGE_NAME}:${BUILD_NUMBER}"
           sh """
             cd plusone
-            jf docker buildx build --platform linux/amd64,linux/arm64 --push --tag ${dockerImageName} --file Dockerfile .
+            jf docker buildx build --platform linux/amd64 --push --tag ${dockerImageName} --file Dockerfile .
           """
         }
       }
