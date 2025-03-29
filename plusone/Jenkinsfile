@@ -42,7 +42,8 @@ pipeline {
               docker buildx create --use --name mybuilder
             fi
             cd plusone
-            jf docker buildx build --platform linux/amd64 --load --tag ${dockerImageName} --file Dockerfile .
+            // jf docker buildx build --platform linux/amd64 --load --tag ${dockerImageName} --file Dockerfile .
+            jf docker build -t ${dockerImageName} .
           """
           sh """
             export JFROG_CLI_BUILD_NAME=${BUILD_NAME}
@@ -59,7 +60,8 @@ pipeline {
           def dockerImageName = "${IMAGE_NAME}:${BUILD_NUMBER}"
           sh """
             cd plusone
-            jf docker buildx build --platform linux/amd64 --push --tag ${dockerImageName} --file Dockerfile .
+            // jf docker buildx build --platform linux/amd64 --push --tag ${dockerImageName} --file Dockerfile .
+            jf docker push ${dockerImageName}
           """
         }
       }
@@ -77,7 +79,7 @@ pipeline {
           export KUBECONFIG=/var/lib/jenkins/.kube/config
           kubectl get pods
           cd charts
-          helm upgrade --install plusone-chart ./plusone-chart --set image.tag=${GIT_COMMIT}
+          helm upgrade --install plusone-chart ./plusone-chart --set image.tag=${BUILD_NUMBER}
         """
       }
     }

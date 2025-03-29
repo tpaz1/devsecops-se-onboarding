@@ -126,7 +126,8 @@ pipeline {
             else
               docker buildx create --use --name mybuilder
             fi
-            jf docker buildx build --platform linux/amd64 --load --tag ${dockerImageName} --file Dockerfile .
+            // jf docker buildx build --platform linux/amd64 --load --tag ${dockerImageName} --file Dockerfile .
+            jf docker build -t ${dockerImageName} .
           """
 
           sh """
@@ -162,7 +163,8 @@ pipeline {
 
           def dockerImageName = "${IMAGE_NAME}:${BUILD_NUMBER}"
           sh """
-            jf docker buildx build --platform linux/amd64 --push --tag ${dockerImageName} --file Dockerfile .
+            // jf docker buildx build --platform linux/amd64 --push --tag ${dockerImageName} --file Dockerfile .
+            jf docker push ${dockerImageName}
           """
 
           githubNotify credentialsId: 'github-user', context: 'Push Docker Image', status: 'SUCCESS', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
@@ -227,7 +229,7 @@ pipeline {
           export KUBECONFIG=/var/lib/jenkins/.kube/config
           kubectl get pods
           cd charts
-          helm upgrade --install numeric-chart ./numeric-chart --set image.tag=${GIT_COMMIT}
+          helm upgrade --install numeric-chart ./numeric-chart --set image.tag=${BUILD_NUMBER}
         """
         script {
           githubNotify credentialsId: 'github-user', context: 'Kubernetes Deploy - DEV', status: 'SUCCESS', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
