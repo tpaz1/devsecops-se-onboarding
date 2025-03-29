@@ -1,0 +1,30 @@
+version: '3'
+services:
+  plusone-service:
+    build:
+      context: ./plusone
+      dockerfile: Dockerfile
+    image: plusone:latest
+    ports:
+      - "5001:5000"
+    deploy:
+      replicas: 1
+    networks:
+      - my-network
+
+  numeric-service:
+    build:
+      dockerfile: Dockerfile
+    image: numeric:latest
+    ports:
+      - "8080:8080"
+    deploy:
+      replicas: 1
+    depends_on:
+      - plusone-service
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge
