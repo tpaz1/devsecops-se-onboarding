@@ -138,7 +138,7 @@ pipeline {
           
           sh """
             echo "Vulnerability Summary:"
-            cat xray-scan-report.json | jq '[.vulnerabilities[] | {severity, summary, component}]' | tee xray-scan-summary-image.txt
+            cat xray-scan-report-image.json | jq '[.vulnerabilities[] | {severity, summary, component}]' | tee xray-scan-summary-image.txt
           """
 
           archiveArtifacts artifacts: 'xray-scan-report-image.json, xray-scan-summary-image.txt', allowEmptyArchive: true
