@@ -255,13 +255,13 @@ pipeline {
       }
     }
 
+
     stage('Integration Tests - DEV') {
       steps {
         script {
           githubNotify credentialsId: 'github-user', context: 'Integration Tests - DEV', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
-            sh "bash integration-test.sh"
-        }
+        sh "bash integration-test.sh"
         script {
           githubNotify credentialsId: 'github-user', context: 'Integration Tests - DEV', status: 'SUCCESS', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
@@ -275,3 +275,4 @@ pipeline {
       }
     }
   }
+}
