@@ -3,6 +3,8 @@ fileignoreconfig:
   checksum: 58c579d0d9d03357b75c8145669909d9063735193e9e3913d9f5c5e900372236
 - filename: .github/workflows/frogbot-scan-pull-request.yml
   checksum: ec68bd26b6754a55a0c58aefdbe0d40f4a7b7877f0eb76aed699b1184b76e2bb
-- filename: charts/numeric-chart/Jenkinsfile
-  checksum: 6898b8428261aeaaadd47e675999ee594125c04eabb245901f182078f85e349c
+- filename: Jenkinsfile
+  checksum: 4134d2f3613fad2e438bf9242c4c7fcc55641c3ff57e869aca6b9fad92adf040
+- filename: plusone/Jenkinsfile
+  checksum: 3db479099d2505e2743ff41200f1c2aeab20f881efe899a833b23c4c13ce3bb9
 version: "1.0"

@@ -225,12 +225,21 @@ pipeline {
         script {
           githubNotify credentialsId: 'github-user', context: 'Kubernetes Deploy - DEV', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
-        sh """
-          export KUBECONFIG=/var/lib/jenkins/.kube/config
-          kubectl get pods
-          cd charts
-          helm upgrade --install numeric-chart ./numeric-chart --set image.tag=${BUILD_NUMBER}
-        """
+        script {
+          withCredentials([usernamePassword(credentialsId: 'helm-keys', usernameVariable: 'ARTIFACTORY_USERNAME', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+            sh """
+              export KUBECONFIG=/var/lib/jenkins/.kube/config
+              kubectl get pods
+
+              # Authenticate with Artifactory
+              helm repo add se-helm https://setompaz.jfrog.io/artifactory/se-helm --username $ARTIFACTORY_USERNAME --password $ARTIFACTORY_PASSWORD
+              helm repo update
+
+              # Install or upgrade from Artifactory
+              helm upgrade --install plusone-chart se-helm/numeric-chart --version 1.0.0 --set image.tag=${BUILD_NUMBER}
+            """
+          }
+        }
         script {
           githubNotify credentialsId: 'github-user', context: 'Kubernetes Deploy - DEV', status: 'SUCCESS', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }

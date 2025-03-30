@@ -73,15 +73,24 @@ pipeline {
       }
     }
 
-    stage('Kubernetes Deployment - DEV') {
-      steps {
-        sh """
-          export KUBECONFIG=/var/lib/jenkins/.kube/config
-          kubectl get pods
-          cd charts
-          helm upgrade --install plusone-chart ./plusone-chart --set image.tag=${BUILD_NUMBER}
-        """
+  stage('Kubernetes Deployment - DEV') {
+    steps {
+      script {
+        withCredentials([usernamePassword(credentialsId: 'helm-keys', usernameVariable: 'ARTIFACTORY_USERNAME', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+          sh """
+            export KUBECONFIG=/var/lib/jenkins/.kube/config
+            kubectl get pods
+  
+            # Authenticate with Artifactory
+            helm repo add se-helm https://setompaz.jfrog.io/artifactory/se-helm --username $ARTIFACTORY_USERNAME --password $ARTIFACTORY_PASSWORD
+            helm repo update
+  
+            # Install or upgrade from Artifactory
+            helm upgrade --install plusone-chart se-helm/plusone-chart --version 1.0.0 --set image.tag=${BUILD_NUMBER}
+          """
+        }
       }
     }
   }
 }
+
