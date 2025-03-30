@@ -232,7 +232,7 @@ pipeline {
               kubectl get pods
 
               # Authenticate with Artifactory
-              helm repo add se-helm-local https://setompaz.jfrog.io/artifactory/se-helm-local --username $ARTIFACTORY_USERNAME --password $ARTIFACTORY_PASSWORD
+              helm repo add se-helm-local https://setompaz.jfrog.io/se-helm-local --username $ARTIFACTORY_USERNAME --password $ARTIFACTORY_PASSWORD
               helm repo update
 
               # Install or upgrade from Artifactory
