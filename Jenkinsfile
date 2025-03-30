@@ -11,7 +11,7 @@ pipeline {
     BUILD_NAME = "numeric-app"
     BUILD_NUMBER = "${BUILD_NUMBER}"
     applicationURL = "http://tomnodeport.soleng.jfrog.info"
-    applicationURI = "/increment/99"
+    applicationURI = "increment/99"
   }
 
   stages {
