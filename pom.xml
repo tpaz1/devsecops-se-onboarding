@@ -83,19 +83,19 @@
 			<plugin>
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>
-				<version>1.15.0</version>
+				<version>1.5.0</version>
 				<dependencies>
 					<dependency>
 						<groupId>org.pitest</groupId>
 						<artifactId>pitest-junit5-plugin</artifactId>
-						<version>1.2.0</version>
+						<version>0.12</version>
 					</dependency>
 				</dependencies>
 				<configuration>
 					<mutationThreshold>70</mutationThreshold>
 					<outputFormats>
-						<param>XML</param>
-						<param>HTML</param>
+						<value>XML</value>
+						<value>HTML</value>
 					</outputFormats>
 				</configuration>
 			</plugin>
