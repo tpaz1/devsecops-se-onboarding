@@ -1,0 +1,48 @@
+pipeline {
+  agent any
+
+  environment {
+    ARTIFACTORY_URL = "setompaz.jfrog.io"
+    CHART_REPO = "se-helm"
+    CHART_NAME = "numeric-chart"
+    OCI_REGISTRY = "oci://${ARTIFACTORY_URL}/${CHART_REPO}"
+  }
+
+  parameters {
+    string(name: 'CHART_VERSION', defaultValue: '1.0.0', description: 'Chart version to push')
+  }
+
+  stages {
+    stage('Login to Artifactory with Access Token') {
+      steps {
+        withCredentials([string(credentialsId: 'jfrog-access-token', variable: 'ACCESS_TOKEN')]) {
+          sh """
+            helm registry login ${ARTIFACTORY_URL} \
+              --username "_" \
+              --password ${ACCESS_TOKEN}
+          """
+        }
+      }
+    }
+
+    stage('Package Helm Chart') {
+      steps {
+        sh """
+          echo "Packaging Helm chart..."
+          cd charts
+          helm lint ${CHART_NAME}
+          helm package ${CHART_NAME} --version ${params.CHART_VERSION}
+        """
+      }
+    }
+
+    stage('Push Helm Chart to OCI') {
+      steps {
+        sh """
+          echo "Pushing Helm chart to Artifactory OCI..."
+          helm push ${CHART_NAME}-${params.CHART_VERSION}.tgz ${OCI_REGISTRY}
+        """
+      }
+    }
+  }
+}

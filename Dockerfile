@@ -5,13 +5,13 @@ FROM setompaz.jfrog.io/serepo-docker/openjdk:17-jdk-slim
 RUN apt-get update && \
     apt-get install -y --no-install-recommends adduser && \
     apt-get upgrade -y adduser && \
-    apt-get install -y --no-install-recommends dpkg && \
-    apt-get upgrade -y dpkg && \
     rm -rf /var/lib/apt/lists/*
-
+    
+    # apt-get install -y --no-install-recommends dpkg && \
+    # apt-get upgrade -y dpkg && \
 # remove the default JMX password file
 # This file is not needed for the application and can be a security risk
-RUN rm -f /usr/local/openjdk-17/conf/management/jmxremote.password.template
+# RUN rm -f /usr/local/openjdk-17/conf/management/jmxremote.password.template
 
 
 # Set a non-root user for security
