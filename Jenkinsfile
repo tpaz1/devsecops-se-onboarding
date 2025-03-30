@@ -233,7 +233,7 @@ pipeline {
 
               helm pull oci://setompaz.jfrog.io/se-helm-local/numeric-chart --version 1.0.0 --username $ARTIFACTORY_USERNAME --password $ARTIFACTORY_PASSWORD
 
-              CHART_FILE=\$(ls plusone-chart-*.tgz)
+              CHART_FILE=\$(ls numeric-chart-*.tgz)
   
               # Install or upgrade from Artifactory
               helm upgrade --install numeric-chart \$CHART_FILE --set image.tag=${BUILD_NUMBER}
