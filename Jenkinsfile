@@ -231,12 +231,10 @@ pipeline {
               export KUBECONFIG=/var/lib/jenkins/.kube/config
               kubectl get pods
 
-              # Authenticate with Artifactory
-              helm repo add se-helm-local https://setompaz.jfrog.io/se-helm-local --username $ARTIFACTORY_USERNAME --password $ARTIFACTORY_PASSWORD
-              helm repo update
-
+              helm pull oci://setompaz.jfrog.io/se-helm-local/numeric-chart --version 1.0.0 --username $ARTIFACTORY_USERNAME --password $ARTIFACTORY_PASSWORD
+  
               # Install or upgrade from Artifactory
-              helm upgrade --install plusone-chart se-helm-local/numeric-chart --version 1.0.0 --set image.tag=${BUILD_NUMBER}
+              helm upgrade --install numeric-chart ./numeric-chart-1.0.0.tgz --set image.tag=${BUILD_NUMBER}
             """
           }
         }
