@@ -7,4 +7,6 @@ fileignoreconfig:
   checksum: 4134d2f3613fad2e438bf9242c4c7fcc55641c3ff57e869aca6b9fad92adf040
 - filename: plusone/Jenkinsfile
   checksum: bb544693f56fad88847940582ed53ae1a4c61f4c6dd235806261c290ea3f37bb
+- filename: zap.sh
+  checksum: 6890f7b688fabd2bac05b2db0225971bf92f84d11b807b862b5eb09f0d469fbb
 version: "1.0"

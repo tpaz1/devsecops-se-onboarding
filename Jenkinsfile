@@ -255,13 +255,16 @@ pipeline {
       }
     }
 
-
     stage('Integration Tests - DEV') {
       steps {
         script {
           githubNotify credentialsId: 'github-user', context: 'Integration Tests - DEV', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
-        sh "bash integration-test.sh"
+        sh """
+          export KUBECONFIG=/var/lib/jenkins/.kube/config
+          kubectl get pods
+          bash integration-test.sh
+        """
         script {
           githubNotify credentialsId: 'github-user', context: 'Integration Tests - DEV', status: 'SUCCESS', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
@@ -271,6 +274,32 @@ pipeline {
           script {
             githubNotify credentialsId: 'github-user', context: 'Integration Tests - DEV', status: 'FAILURE', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
           }
+        }
+      }
+    }
+
+    stage('OWASP ZAP - DAST') {
+      steps {
+        script {
+          githubNotify credentialsId: 'github-user', context: 'Integration Tests - DEV', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
+        }
+        sh """
+          export KUBECONFIG=/var/lib/jenkins/.kube/config
+          kubectl get pods
+          bash zap.sh
+        """
+        script {
+          githubNotify credentialsId: 'github-user', context: 'Integration Tests - DEV', status: 'SUCCESS', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
+        }
+      }
+      post {
+        failure {
+          script {
+            githubNotify credentialsId: 'github-user', context: 'Integration Tests - DEV', status: 'FAILURE', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
+          }
+        }
+        always {
+          publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: 'owasp-zap-report', reportFiles: 'zap_report.html', reportName: 'OWASP ZAP HTML Report', reportTitles: 'OWASP ZAP HTML Report', useWrapperFileDirectly: true])
         }
       }
     }
