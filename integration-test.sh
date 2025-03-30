@@ -1,37 +1,55 @@
 #!/bin/bash
 
-#integration-test.sh
+# integration-test.sh
 
-sleep 5s
+# Start port forwarding in the background
+echo "Starting port-forward for numeric-service..."
+kubectl port-forward svc/numeric-service 9091:8080 &
+PORT_FORWARD_PID=$!
+echo "Port-forward started with PID: $PORT_FORWARD_PID"
 
-PORT=$(kubectl -n default get svc numeric-service -o json | jq .spec.ports[].nodePort)
+# Allow some time for the port-forward to establish
+sleep 5
 
-echo $PORT
-echo $applicationURL:$PORT/$applicationURI
+# Test URL
+URL="http://localhost:9091/increment/99"
 
-if [[ ! -z "$PORT" ]];
-then
+echo "Testing URL: $URL"
 
-    response=$(curl -s $applicationURL:$PORT$applicationURI)
-    http_code=$(curl -s -o /dev/null -w "%{http_code}" $applicationURL:$PORT$applicationURI)
+# Perform retries
+MAX_RETRIES=5
+for (( i=1; i<=MAX_RETRIES; i++ ))
+do
+    echo "Attempt $i/$MAX_RETRIES - Sending request to $URL"
 
-    if [[ "$response" == 100 ]];
-        then
-            echo "Increment Test Passed"
-        else
-            echo "Increment Test Failed"
-            exit 1;
-    fi;
+    # Get the response and HTTP status code
+    response=$(curl -s $URL)
+    http_code=$(curl -s -o /dev/null -w "%{http_code}" $URL)
 
-    if [[ "$http_code" == 200 ]];
-        then
-            echo "HTTP Status Code Test Passed"
-        else
-            echo "HTTP Status code is not 200"
-            exit 1;
-    fi;
+    echo "Response: $response"
+    echo "HTTP Code: $http_code"
 
+    # Check if response and HTTP code are valid
+    if [[ "$response" == "100" && "$http_code" == "200" ]]; then
+        echo "✅ Increment Test Passed"
+        echo "✅ HTTP Status Code Test Passed"
+        break
+    else
+        echo "❗ Test failed, retrying in 5 seconds..."
+        sleep 5
+    fi
+done
+
+# Stop port forwarding
+echo "Stopping port-forward with PID: $PORT_FORWARD_PID"
+kill $PORT_FORWARD_PID
+wait $PORT_FORWARD_PID 2>/dev/null
+
+# Check if the test failed after retries
+if [[ "$response" != "100" || "$http_code" != "200" ]]; then
+    echo "❌ Tests failed after $MAX_RETRIES attempts."
+    exit 1
 else
-        echo "The Service does not have a NodePort"
-        exit 1;
-fi;
+    echo "✅ All tests passed successfully!"
+    exit 0
+fi
