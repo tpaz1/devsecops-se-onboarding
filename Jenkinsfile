@@ -349,7 +349,7 @@ pipeline {
 		        /* Use slackNotifier.groovy from shared library and provide current build result as parameter */  
 		        env.failedStage = "none"
 		        env.emoji = ":white_check_mark: :tada: :thumbsup_all:" 
-		        sendNotification currentBuild.result
+		        sendNotification(currentBuild.result, deploymentName: 'numericapp')
 		      }
         }
 
@@ -359,7 +359,7 @@ pipeline {
 		      def failedStages = getFailedStages( currentBuild )
 	          env.failedStage = failedStages.failedStageName
 	          env.emoji = ":x: :red_circle: :sos:"
-		      sendNotification currentBuild.result
+		      sendNotification(currentBuild.result, deploymentName: 'numericapp')
 		    }	
 	    }
     }
