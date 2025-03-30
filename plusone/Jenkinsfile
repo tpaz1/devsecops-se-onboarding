@@ -85,7 +85,7 @@ pipeline {
               CHART_FILE=\$(ls plusone-chart-*.tgz)
   
               # Install or upgrade from Artifactory
-              helm upgrade --install plusone-chart \$CHART_FILE --set image.tag=${BUILD_NUMBER}
+              helm upgrade --install plusone-chart \$CHART_FILE --set image.tag=${BUILD_NUMBER} --wait --timeout 5m --atomic
             """
           }
         }
