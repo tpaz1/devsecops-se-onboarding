@@ -19,7 +19,7 @@ echo "API Docs URL: $URL"
 
 # Run OWASP ZAP API Scan with Custom Rules
 echo "Running OWASP ZAP API Scan with Custom Rules..."
-docker run -v $(pwd):/zap/wrk/:rw -t owasp/zap2docker-weekly zap-api-scan.py -t $URL -f openapi -c zap_rules -r zap_report.html
+docker run -v $(pwd):/zap/wrk/:rw -t ictu/zap2docker-weekly zap-api-scan.py -t $URL -f openapi -c zap_rules -r zap_report.html
 exit_code=$?
 
 # Stop port forwarding
@@ -29,8 +29,8 @@ wait $PORT_FORWARD_PID 2>/dev/null
 
 # Generate HTML Report
 echo "Generating OWASP ZAP HTML Report..."
-sudo mkdir -p owasp-zap-report
-sudo mv zap_report.html owasp-zap-report
+mkdir -p owasp-zap-report
+mv zap_report.html owasp-zap-report
 echo "Report saved to owasp-zap-report/zap_report.html"
 
 echo "Exit Code: $exit_code"
