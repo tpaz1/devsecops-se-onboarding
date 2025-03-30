@@ -10,6 +10,8 @@ pipeline {
     GIT_COMMIT = "${env.GIT_COMMIT}"
     BUILD_NAME = "numeric-app"
     BUILD_NUMBER = "${BUILD_NUMBER}"
+    applicationURL = "http://tomnodeport.soleng.jfrog.info"
+    applicationURI = "/increment/99"
   }
 
   stages {
@@ -248,6 +250,28 @@ pipeline {
         failure {
           script {
             githubNotify credentialsId: 'github-user', context: 'Kubernetes Deploy - DEV', status: 'FAILURE', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
+          }
+        }
+      }
+    }
+
+    stage('Integration Tests - DEV') {
+      steps {
+        script {
+          githubNotify credentialsId: 'github-user', context: 'Integration Tests - DEV', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
+        }
+        script {
+            sh "bash integration-test.sh"
+          }
+        }
+        script {
+          githubNotify credentialsId: 'github-user', context: 'Integration Tests - DEV', status: 'SUCCESS', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
+        }
+      }
+      post {
+        failure {
+          script {
+            githubNotify credentialsId: 'github-user', context: 'Integration Tests - DEV', status: 'FAILURE', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
           }
         }
       }
