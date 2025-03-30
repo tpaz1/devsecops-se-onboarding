@@ -19,7 +19,7 @@ echo "API Docs URL: $URL"
 
 # Run OWASP ZAP API Scan with Custom Rules
 echo "Running OWASP ZAP API Scan with Custom Rules..."
-docker run -v $(pwd):/zap/wrk/:rw -t ictu/zap2docker-weekly zap-api-scan.py -t $URL -f openapi -c zap_rules -r zap_report.html
+docker run --network host -v $(pwd):/zap/wrk/:rw -t ictu/zap2docker-weekly zap-api-scan.py -t $URL -f openapi -c zap_rules -r zap_report.html
 exit_code=$?
 
 # Stop port forwarding
