@@ -1,48 +1,58 @@
 pipeline {
-  agent any
+    agent any
 
-  environment {
-    ARTIFACTORY_URL = "setompaz.jfrog.io"
-    CHART_REPO = "se-helm"
-    CHART_NAME = "numeric-chart"
-    OCI_REGISTRY = "oci://${ARTIFACTORY_URL}/${CHART_REPO}"
-  }
+    parameters {
+        choice(name: 'CHART_NAME', choices: ['numeric', 'plusone'], description: 'Select the chart name')
+        string(name: 'CHART_VERSION', defaultValue: '1.0.0', description: 'Enter the chart version')
+    }
 
-  parameters {
-    string(name: 'CHART_VERSION', defaultValue: '1.0.0', description: 'Chart version to push')
-  }
+    environment {
+        ARTIFACTORY_REPO = "setompaz.jfrog.io/se-helm"
+        FINAL_CHART_NAME = "${params.CHART_NAME}-chart"
+    }
 
-  stages {
-    stage('Login to Artifactory with Access Token') {
-      steps {
-        withCredentials([string(credentialsId: 'jfrog-access-token', variable: 'ACCESS_TOKEN')]) {
-          sh """
-            helm registry login ${ARTIFACTORY_URL} \
-              --username "_" \
-              --password ${ACCESS_TOKEN}
-          """
+    stages {
+        stage('Declarative: Checkout SCM') {
+            steps {
+                checkout scm
+            }
         }
-      }
+
+        stage('Login to Artifactory with Access Token') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'helm-keys', usernameVariable: 'ARTIFACTORY_USERNAME', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+                        sh """
+                        helm registry login $ARTIFACTORY_REPO --username $ARTIFACTORY_USERNAME --password $ARTIFACTORY_PASSWORD
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Package Helm Chart') {
+            steps {
+                sh """
+                helm package charts/${FINAL_CHART_NAME} --version ${params.CHART_VERSION}
+                """
+            }
+        }
+
+        stage('Push Helm Chart to OCI') {
+            steps {
+                sh """
+                helm push ${FINAL_CHART_NAME}-${params.CHART_VERSION}.tgz oci://$ARTIFACTORY_REPO
+                """
+            }
+        }
     }
 
-    stage('Package Helm Chart') {
-      steps {
-        sh """
-          echo "Packaging Helm chart..."
-          cd charts
-          helm lint ${CHART_NAME}
-          helm package ${CHART_NAME} --version ${params.CHART_VERSION}
-        """
-      }
+    post {
+        success {
+            echo '✅ Helm chart pushed successfully!'
+        }
+        failure {
+            echo '❌ Pipeline failed. Check logs for errors.'
+        }
     }
-
-    stage('Push Helm Chart to OCI') {
-      steps {
-        sh """
-          echo "Pushing Helm chart to Artifactory OCI..."
-          helm push ${CHART_NAME}-${params.CHART_VERSION}.tgz ${OCI_REGISTRY}
-        """
-      }
-    }
-  }
 }
