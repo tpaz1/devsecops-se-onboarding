@@ -31,10 +31,9 @@ pipeline {
       }
     }
 
-     stage('Build and scan image') {
+    stage('Build and scan image') {
       steps {
         script {
-          // jf docker buildx build --platform linux/amd64 --load --tag ${dockerImageName} --file Dockerfile .
           def dockerImageName = "${IMAGE_NAME}:${BUILD_NUMBER}"
           sh """
             if docker buildx ls | grep -q 'mybuilder'; then
@@ -57,7 +56,6 @@ pipeline {
     stage('Push multi-platform image') {
       steps {
         script {
-          // jf docker buildx build --platform linux/amd64 --push --tag ${dockerImageName} --file Dockerfile .
           def dockerImageName = "${IMAGE_NAME}:${BUILD_NUMBER}"
           sh """
             cd plusone
@@ -73,24 +71,24 @@ pipeline {
       }
     }
 
-  stage('Kubernetes Deployment - DEV') {
-    steps {
-      script {
-        withCredentials([usernamePassword(credentialsId: 'helm-keys', usernameVariable: 'ARTIFACTORY_USERNAME', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
-          sh """
-            export KUBECONFIG=/var/lib/jenkins/.kube/config
-            kubectl get pods
+    stage('Kubernetes Deployment - DEV') {
+      steps {
+        script {
+          withCredentials([usernamePassword(credentialsId: 'helm-keys', usernameVariable: 'ARTIFACTORY_USERNAME', passwordVariable: 'ARTIFACTORY_PASSWORD')]) {
+            sh """
+              export KUBECONFIG=/var/lib/jenkins/.kube/config
+              kubectl get pods
   
-            # Authenticate with Artifactory
-            helm repo add se-helm https://setompaz.jfrog.io/artifactory/se-helm --username $ARTIFACTORY_USERNAME --password $ARTIFACTORY_PASSWORD
-            helm repo update
+              # Authenticate with Artifactory
+              helm repo add se-helm https://setompaz.jfrog.io/artifactory/se-helm --username $ARTIFACTORY_USERNAME --password $ARTIFACTORY_PASSWORD
+              helm repo update
   
-            # Install or upgrade from Artifactory
-            helm upgrade --install plusone-chart se-helm/plusone-chart --version 1.0.0 --set image.tag=${BUILD_NUMBER}
-          """
+              # Install or upgrade from Artifactory
+              helm upgrade --install plusone-chart se-helm/plusone-chart --version 1.0.0 --set image.tag=${BUILD_NUMBER}
+            """
+          }
         }
       }
     }
   }
 }
-

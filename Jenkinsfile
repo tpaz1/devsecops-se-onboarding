@@ -232,11 +232,11 @@ pipeline {
               kubectl get pods
 
               # Authenticate with Artifactory
-              helm repo add se-helm https://setompaz.jfrog.io/artifactory/se-helm --username $ARTIFACTORY_USERNAME --password $ARTIFACTORY_PASSWORD
+              helm repo add se-helm-local https://setompaz.jfrog.io/artifactory/se-helm-local --username $ARTIFACTORY_USERNAME --password $ARTIFACTORY_PASSWORD
               helm repo update
 
               # Install or upgrade from Artifactory
-              helm upgrade --install plusone-chart se-helm/numeric-chart --version 1.0.0 --set image.tag=${BUILD_NUMBER}
+              helm upgrade --install plusone-chart se-helm-local/numeric-chart --version 1.0.0 --set image.tag=${BUILD_NUMBER}
             """
           }
         }
