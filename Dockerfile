@@ -13,7 +13,6 @@ RUN apt-get update && \
 # This file is not needed for the application and can be a security risk
 # RUN rm -f /usr/local/openjdk-17/conf/management/jmxremote.password.template
 
-
 # Set a non-root user for security
 RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
 USER appuser
