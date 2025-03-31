@@ -1,6 +1,6 @@
 fileignoreconfig:
 - filename: .github/workflows/frogbot-scan-repository.yml
-  checksum: 58c579d0d9d03357b75c8145669909d9063735193e9e3913d9f5c5e900372236
+  checksum: 420c3c27a83823a58ab12115549bda06d24fd6cdec56bd46c8b876cbb8dbfa44
 - filename: .github/workflows/frogbot-scan-pull-request.yml
   checksum: ec68bd26b6754a55a0c58aefdbe0d40f4a7b7877f0eb76aed699b1184b76e2bb
 - filename: Jenkinsfile
