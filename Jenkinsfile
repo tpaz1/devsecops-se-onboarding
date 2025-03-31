@@ -244,7 +244,7 @@ pipeline {
           githubNotify credentialsId: 'github-user', context: 'Xray Scan', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
         sh """
-          jf build-scan ${BUILD_NAME} ${BUILD_NUMBER} --format json > xray-report-build.json
+          jf rt build-scan ${BUILD_NAME} ${BUILD_NUMBER} --format json > xray-report-build.json
         """
         archiveArtifacts artifacts: 'xray-report.json', allowEmptyArchive: true
         script {
