@@ -19,6 +19,7 @@
 *.tar.gz
 *.rar
 *.env
+dist/
 
 # Default ignored files
 /shelf/

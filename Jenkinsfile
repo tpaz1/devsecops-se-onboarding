@@ -45,7 +45,7 @@ pipeline {
   }
 
   environment {
-    IMAGE_NAME = "setompaz.jfrog.io/serepo-docker/numeric-app"
+    IMAGE_NAME = "tompazus.jfrog.io/tomp-docker-dev-local/numeric-app"
     GIT_COMMIT = "${env.GIT_COMMIT}"
     BUILD_NAME = "numeric-app"
     BUILD_NUMBER = "${BUILD_NUMBER}"
@@ -131,12 +131,12 @@ pipeline {
         withCredentials([string(credentialsId: 'jfrog-access-token', variable: 'ACCESS_TOKEN')]) {
           sh """
             jf c add jfrog-server \
-              --url=https://setompaz.jfrog.io \
+              --url=https://tompazus.jfrog.io \
               --access-token=$ACCESS_TOKEN \
               --interactive=false \
               --overwrite=true \
-              --artifactory-url=https://setompaz.jfrog.io/artifactory \
-              --xray-url=https://setompaz.jfrog.io/xray
+              --artifactory-url=https://tompazus.jfrog.io/artifactory \
+              --xray-url=https://tompazus.jfrog.io/xray
 
             jf rt bce numeric-app $BUILD_NUMBER
           """
@@ -272,7 +272,7 @@ pipeline {
               export KUBECONFIG=/var/lib/jenkins/.kube/config
               kubectl get pods
 
-              helm pull oci://setompaz.jfrog.io/se-helm-local/numeric-chart --version 1.0.0 --username $ARTIFACTORY_USERNAME --password $ARTIFACTORY_PASSWORD
+              helm pull oci://tompazus.jfrog.io/se-helm-local/numeric-chart --version 1.0.0 --username $ARTIFACTORY_USERNAME --password $ARTIFACTORY_PASSWORD
 
               CHART_FILE=\$(ls numeric-chart-*.tgz)
   
