@@ -45,6 +45,7 @@ pipeline {
   }
 
   environment {
+    JAVA_TOOL_OPTIONS = '-Djdk.lang.Process.launchMechanism=fork'
     IMAGE_NAME = "tompazus.jfrog.io/tomp-docker-dev-local/numeric-app"
     GIT_COMMIT = "${env.GIT_COMMIT}"
     BUILD_NAME = "numeric-app"
