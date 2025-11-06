@@ -1,5 +1,5 @@
 # Use a secure, minimal image
-FROM setompaz.jfrog.io/serepo-docker/openjdk:17-jdk-slim
+FROM setompaz.jfrog.io/docker-virtual/openjdk:17-jdk-slim
 
 # Update package lists and upgrade dpkg to a secure version
 RUN apt-get update && \
