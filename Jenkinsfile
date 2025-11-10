@@ -172,6 +172,7 @@ pipeline {
             fi
             jf c show
             jf rt ping
+            jf docker pull tompazus.jfrog.io/docker-virtual/eclipse-temurin:17-jdk-jammy
             jf docker build -t ${dockerImageName} .
           """
 
