@@ -170,6 +170,8 @@ pipeline {
             else
               docker buildx create --use --name mybuilder
             fi
+            jf c show
+            jf rt ping
             jf docker build -t ${dockerImageName} .
           """
 
