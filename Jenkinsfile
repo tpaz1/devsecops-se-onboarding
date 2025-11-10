@@ -179,7 +179,7 @@ pipeline {
           sh """
             export JFROG_CLI_BUILD_NAME=${BUILD_NAME}
             export JFROG_CLI_BUILD_NUMBER=${BUILD_NUMBER}
-            jf docker scan ${dockerImageName} --build-name=${BUILD_NAME} --build-number=${BUILD_NUMBER} --watches=build-watch-jas --format json > xray-scan-report-image.json
+            jf docker scan ${dockerImageName} --build-name=${BUILD_NAME} --build-number=${BUILD_NUMBER} --format json > xray-scan-report-image.json
           """
           
           sh """
