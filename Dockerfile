@@ -1,5 +1,5 @@
 # Use a secure, minimal image
-FROM tompazus.jfrog.io/docker-virtual/openjdk:17-jdk-slim
+FROM tompazus.jfrog.io/docker-virtual/eclipse-temurin:17-jdk-jammy
 
 # Update package lists and upgrade dpkg to a secure version
 RUN apt-get update && \
