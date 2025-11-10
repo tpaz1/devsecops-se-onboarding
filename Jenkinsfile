@@ -170,7 +170,6 @@ pipeline {
             else
               docker buildx create --use --name mybuilder
             fi
-            jf docker login
             jf docker build -t ${dockerImageName} .
           """
 
