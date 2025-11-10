@@ -172,14 +172,14 @@ pipeline {
             fi
             jf c show
             jf rt ping
-            jf docker pull tompazus.jfrog.io/docker-virtual/eclipse-temurin:17-jdk-jammy
+            jf docker pull tompazus.jfrog.io/docker-virtual/eclipse-temurin:17-jdk-jammy --build-name=${BUILD_NAME} --build-number=${BUILD_NUMBER}
             jf docker build -t ${dockerImageName} .
           """
 
           sh """
             export JFROG_CLI_BUILD_NAME=${BUILD_NAME}
             export JFROG_CLI_BUILD_NUMBER=${BUILD_NUMBER}
-            jf docker scan ${dockerImageName} --format json > xray-scan-report-image.json
+            jf docker scan ${dockerImageName} --build-name=${BUILD_NAME} --build-number=${BUILD_NUMBER} --format json > xray-scan-report-image.json
           """
           
           sh """
@@ -210,7 +210,7 @@ pipeline {
           // jf docker buildx build --platform linux/amd64 --push --tag ${dockerImageName} --file Dockerfile .
           def dockerImageName = "${IMAGE_NAME}:${BUILD_NUMBER}"
           sh """
-            jf docker push ${dockerImageName}
+            jf docker push ${dockerImageName} --build-name=${BUILD_NAME} --build-number=${BUILD_NUMBER}
           """
 
           githubNotify credentialsId: 'github-user', context: 'Push Docker Image', status: 'SUCCESS', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
