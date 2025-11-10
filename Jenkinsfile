@@ -140,7 +140,7 @@ pipeline {
               --xray-url=https://tompazus.jfrog.io/xray
             jf c use jfrog-server
 
-            jf rt bce numeric-app $BUILD_NUMBER
+            # jf rt bce numeric-app $BUILD_NUMBER
           """
         }
         script {
@@ -230,7 +230,11 @@ pipeline {
         script {
           githubNotify credentialsId: 'github-user', context: 'Publish Build Info', status: 'PENDING', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
-        sh "jf rt build-publish ${BUILD_NAME} ${BUILD_NUMBER}"
+        sh """
+          jf rt build-add-git ${BUILD_NAME} ${BUILD_NUMBER} # connect to git metadata and repo
+          jf rt build-collect-env ${BUILD_NAME} ${BUILD_NUMBER} # show ENV variables
+          jf rt build-publish ${BUILD_NAME} ${BUILD_NUMBER} # push info to rt 
+        """
         script {
           githubNotify credentialsId: 'github-user', context: 'Publish Build Info', status: 'SUCCESS', repo: 'devsecops-se-onboarding', account: 'tpaz1', sha: "${env.GIT_COMMIT}"
         }
