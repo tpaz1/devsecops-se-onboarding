@@ -138,6 +138,7 @@ pipeline {
               --overwrite=true \
               --artifactory-url=https://tompazus.jfrog.io/artifactory \
               --xray-url=https://tompazus.jfrog.io/xray
+            jf c use jfrog-server
 
             jf rt bce numeric-app $BUILD_NUMBER
           """
@@ -169,6 +170,7 @@ pipeline {
             else
               docker buildx create --use --name mybuilder
             fi
+            jf docker login
             jf docker build -t ${dockerImageName} .
           """
 
