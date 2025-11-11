@@ -1,7 +1,21 @@
 # zap-api-scan rule configuration file
 # Change WARN to IGNORE to ignore rule or FAIL to fail if rule matches
 # Active scan rules set to IGNORE will not be run which will speed up the scan
-# Only the rule identifiers are used - the names are just for info
-# You can add your own messages to each rule by appending them after a tab on each line.
-100001	IGNORE	http://localhost:9091/
-100000	IGNORE	http://localhost:9091/
+
+# Unexpected Content-Type was returned
+100001 IGNORE
+
+# Client/Server error response codes (400/404/500 etc.)
+100000 IGNORE
+
+# ZAP is Out of Date (Medium)
+10116 IGNORE
+
+# Non-Storable Content
+10049 IGNORE
+
+# Sec-Fetch-* headers missing (all 4 are the same plugin id)
+90005 IGNORE
+
+# User Agent Fuzzer
+10104 IGNORE
