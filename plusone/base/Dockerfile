@@ -1,4 +1,4 @@
-FROM setompaz.jfrog.io/serepo-docker/library/python:3.12-slim
+FROM tompazus.jfrog.io/docker-virtual/library/python:3.12-slim
 
 # Set working directory
 WORKDIR /app
