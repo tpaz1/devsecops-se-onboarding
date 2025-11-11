@@ -4,7 +4,7 @@ image:
   repository: tompazus.jfrog.io/docker-virtual/plusone-app
   tag: latest
   pullPolicy: IfNotPresent
-  pullSecret: setompaz-registry-secret
+  pullSecret: tompazus-registry-secret
 
 service:
   type: ClusterIP

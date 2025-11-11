@@ -1,10 +1,10 @@
 replicaCount: 2
 
 image:
-  repository: setompaz.jfrog.io/serepo-docker/numeric-app
+  repository: tompazus.jfrog.io/docker-virtual/numeric-app
   tag: latest
   pullPolicy: IfNotPresent
-  pullSecret: setompaz-registry-secret
+  pullSecret: tompazus-registry-secret
 
 service:
   type: NodePort
