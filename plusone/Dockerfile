@@ -1,4 +1,4 @@
-FROM setompaz.jfrog.io/serepo-docker/plusone-app-base:latest
+FROM tompazus.jfrog.io/docker-virtual/plusone-app-base:latest
 
 # Copy application
 COPY app.py .

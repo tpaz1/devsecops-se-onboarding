@@ -29,4 +29,3 @@ brew install pre-commit       # or: pip install pre-commit
 pre-commit install
 pre-commit run --all-files    # optional: run on entire repo
 
-aohod

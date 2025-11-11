@@ -6,7 +6,7 @@ pipeline {
   }
 
   environment {
-    IMAGE_NAME = "setompaz.jfrog.io/serepo-docker/plusone-app"
+    IMAGE_NAME = "tompazus.jfrog.io/docker-virtual/plusone-app"
     GIT_COMMIT = "${env.GIT_COMMIT}"
     BUILD_NAME = "plusone-app"
     BUILD_NUMBER = "${BUILD_NUMBER}"
@@ -18,12 +18,12 @@ pipeline {
         withCredentials([string(credentialsId: 'jfrog-access-token', variable: 'ACCESS_TOKEN')]) {
           sh '''
             jf c add jfrog-server \
-              --url=https://setompaz.jfrog.io \
+              --url=https://tompazus.jfrog.io \
               --access-token=$ACCESS_TOKEN \
               --interactive=false \
               --overwrite=true \
-              --artifactory-url=https://setompaz.jfrog.io/artifactory \
-              --xray-url=https://setompaz.jfrog.io/xray
+              --artifactory-url=https://tompazus.jfrog.io/artifactory \
+              --xray-url=https://tompazus.jfrog.io/xray
 
             jf rt bce plusone-app $BUILD_NUMBER
           '''
@@ -42,12 +42,12 @@ pipeline {
               docker buildx create --use --name mybuilder
             fi
             cd plusone
-            jf docker build -t ${dockerImageName} .
+            jf docker build -t ${dockerImageName} . --build-name=${BUILD_NAME} --build-number=${BUILD_NUMBER}
           """
           sh """
             export JFROG_CLI_BUILD_NAME=${BUILD_NAME}
             export JFROG_CLI_BUILD_NUMBER=${BUILD_NUMBER}
-            jf docker scan ${dockerImageName}
+            jf docker scan ${dockerImageName} --build-name=${BUILD_NAME} --build-number=${BUILD_NUMBER}
           """
         }
       }
@@ -59,7 +59,7 @@ pipeline {
           def dockerImageName = "${IMAGE_NAME}:${BUILD_NUMBER}"
           sh """
             cd plusone
-            jf docker push ${dockerImageName}
+            jf docker push ${dockerImageName} --build-name=${BUILD_NAME} --build-number=${BUILD_NUMBER}
           """
         }
       }
@@ -67,7 +67,11 @@ pipeline {
 
     stage('Publish build info') {
       steps {
-        sh "jf rt build-publish ${BUILD_NAME} ${BUILD_NUMBER}"
+        sh """
+          jf rt build-add-git ${BUILD_NAME} ${BUILD_NUMBER} # connect to git metadata and repo
+          jf rt build-collect-env ${BUILD_NAME} ${BUILD_NUMBER} # show ENV variables
+          jf rt build-publish ${BUILD_NAME} ${BUILD_NUMBER} # push info to rt 
+        """
       }
     }
 
@@ -80,7 +84,7 @@ pipeline {
               kubectl get pods
   
               # Authenticate with Artifactory
-              helm pull oci://setompaz.jfrog.io/se-helm-local/plusone-chart --version 1.0.0 --username $ARTIFACTORY_USERNAME --password $ARTIFACTORY_PASSWORD
+              helm pull oci://tompazus.jfrog.io/se-helm-local/plusone-chart --version 1.0.0 --username $ARTIFACTORY_USERNAME --password $ARTIFACTORY_PASSWORD
 
               CHART_FILE=\$(ls plusone-chart-*.tgz)
   
