@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        ARTIFACTORY_REPO = "setompaz.jfrog.io/se-helm-local"
+        ARTIFACTORY_REPO = "tompazus.jfrog.io/se-helm-local"
         FINAL_CHART_NAME = "${params.CHART_NAME}-chart"
     }
 
